@@ -1,0 +1,89 @@
+var cars = [
+  {year: 2013, model: "A", price: 32000},
+  {year: 2011, model: "B", price: 4400},
+  {year: 2016, model: "B", price: 15500}]
+
+var trucks = [
+  {year: 2014, model: "D", price: 18000},
+  {year: 2013, model: "E", price: 5200}]
+
+var convertibles = [
+  {year: 2009, model: "F", price: 2000},
+  {year: 2010, model: "G", price: 6000},
+  {year: 2012, model: "H", price: 12500},
+  {year: 2017, model: "M", price: 50000}]
+
+function Welcome(props){
+  return <div className="container jumbotron">
+      <h2 className="display-4">{props.welcomeText}</h2>
+      <p className="lead">{props.description}</p>
+    </div>
+}
+
+function VehicleOptions(props){
+  return <option value = {props.value}>{props.value}</option>
+}
+
+function Choose(props){
+  return <div className="container">
+      <h2>Choose Options</h2>
+    <div className="form-check">
+      <input className="form-check-input" type="checkbox" id="coding" name="interest" value="coding"/>
+      <label className="form-check-label" for="coding">New Only</label> 
+     </div>
+    <div className="form-group">
+      <label for="typeSelect">Select Type</label>
+      <select className="form-control" id="typeSelect">
+        <VehicleOptions value ="All"/>
+        <VehicleOptions value ="Cars"/>
+        <VehicleOptions value ="Trucks"/>
+        <VehicleOptions value ="Convertibles"/>
+      </select>
+    </div>
+  </div>
+}
+
+function TableTitle(props){
+  return <div className="container">
+  <h2 className="display-4">{props.tableName}</h2>
+  {props.data.map((v, i)=>{
+        return <TableItem data={v} key={i}/>
+      })}
+   </div>
+}
+
+function TableItem(props){
+  return <table className="table">
+    <thead className="thead-light">
+    <tr>
+        <th>Year</th>
+        <th>Model</th>
+        <th>Price</th>
+        <th>Buy</th>
+       </tr>
+     </thead>
+     <tr>
+       <td>{props.data.year}</td>
+       <td>{props.data.model}</td>
+       <td>${props.data.price}</td>
+       <td><button className="btn btn-success">Buy Now</button></td>
+     </tr>
+  </table>
+}
+
+function CarsApp(props){
+  return <div>
+     <Welcome welcomeText = "Welcome to React Transportation" description = "The best place to buy vehicles online"/>
+    <Choose/>
+    <div>
+      <TableTitle tableName = "Cars" data = {cars}/>
+      <TableTitle tableName = "Trucks" data = {trucks}/>
+      <TableTitle tableName = "Convertibles" data = {convertibles}/>
+    </div>
+    </div>
+}
+
+ReactDOM.render(
+  <CarsApp/>,
+  document.getElementById("root")
+)

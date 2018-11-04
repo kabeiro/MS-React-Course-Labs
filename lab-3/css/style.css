@@ -1,0 +1,14 @@
+.container {
+  margin-top: 1em;
+}
+
+table {
+  margin-top: 1em;
+  text-align: center;
+  min-width: 500px;
+  max-width: 600px;
+}
+
+form {
+  max-width: 350px;
+}

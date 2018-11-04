@@ -1,0 +1,162 @@
+class App extends React.Component {
+  constructor(props) {
+    super(props);
+    this.state = {
+      id: 0,
+      firstname: "",
+      lastname: "",
+      activity: "Science Lab",
+      a: false,
+      b: false,
+      c: false,
+      tableData: []
+    };
+    
+    this.handleInputChange = this.handleInputChange.bind(this);
+    this.handleFormSubmit = this.handleFormSubmit.bind(this);
+    this.removeEntry = this.removeEntry.bind(this);
+  }
+  
+  // updates the state object with input data
+  handleInputChange(event) {
+    const target = event.target;
+    const name = target.name;
+    const value = target.type === 'checkbox' ? target.checked : target.value;
+    
+    this.setState({
+      [name]: value
+    });
+  }
+  
+  // adds a copy of input data to the tableData array
+  // updates the form to initial empty state
+  handleFormSubmit(event) {
+    event.preventDefault();
+    
+    const entry = {
+      id: this.state.id,
+      firstname: this.state.firstname,
+      lastname: this.state.lastname,
+      activity: this.state.activity,
+      a: this.state.a,
+      b: this.state.b,
+      c: this.state.c
+    };
+    
+    this.setState((prevState) => ({
+        id: prevState.id + 1,
+        firstname: "",
+        lastname: "",
+        activity: "Science Lab",
+        a: false,
+        b: false,
+        c: false,
+        tableData: [...prevState.tableData, entry]
+    }));
+  };
+  
+  // removes entry of interest with the help of its passed id
+  removeEntry(event){
+    let dataCopy = this.state.tableData;
+    let newCopy = dataCopy.filter(element => element.id != event.target.value);
+    this.setState({tableData: newCopy});
+  }
+
+  // form is static so rendered it altogether
+  render() {
+    return (
+      <div className="container">
+        <h3>Registration System</h3> 
+          <form onSubmit={this.handleFormSubmit}>
+            <div className="form-group">
+              <label for="firstname">First Name</label>
+              <input name="firstname" id="firstname" className="form-control" type = "text" value = {this.state.firstname} onChange={this.handleInputChange}/>
+            </div>
+            <div className="form-group">  
+              <label for="lastname">Last Name</label>
+              <input name="lastname" id="lastname" className="form-control" type = "text" value = {this.state.lastname} onChange={this.handleInputChange}/>
+            </div>
+            <div className="form-group">
+              <label for="activity">Select Activity:</label>
+              <select name="activity" id="activity" className="form-control" value={this.state.activity} onChange={this.handleInputChange}>
+                <option value="Science Lab">Science Lab</option>
+                <option value="Swimming">Swimming</option>
+                <option value="Cooking">Cooking</option>
+                <option value="Painting">Painting</option>
+              </select>
+            </div>
+            <div className="form-group">
+              <p>Check all that apply:</p>
+              <div className="form-check">
+                <input name="a" type="checkbox" className="form-check-input" id="a" checked={this.state.a} onChange={this.handleInputChange}/>
+                <label className="form-check-label" for="a">a) Dietary Restrictions</label>
+              </div>
+              <div className="form-check">
+                <input name="b" type="checkbox" className="form-check-input" id="b" checked={this.state.b} onChange={this.handleInputChange}/>
+                <label className="form-check-label" for="b">b) Physical Disabilities</label>
+              </div>
+              <div className="form-check">
+                <input name="c" type="checkbox" className="form-check-input" id="c" checked={this.state.c} onChange={this.handleInputChange}/>
+                <label className="form-check-label" for="c">c) Medical Needs</label>
+              </div>
+            </div>
+            <button class="btn btn-info" type="submit">Submit</button>
+         </form>
+         <RegTable entryList={this.state.tableData} 
+                   remove={this.removeEntry}/>           
+      </div>
+    );
+  }
+}
+
+function RegTable(props) {
+  return (
+    <table className="table">
+      <thead>
+        <tr>
+          <th>Remove</th>
+          <th>First Name</th>
+          <th>Last Name</th>
+          <th>Activity</th>
+          <th>Restrictions</th>
+        </tr>
+      </thead>
+      {props.entryList.map((entry, index) => 
+           <Entry key={index}
+                  id={entry.id}
+                  remove={props.remove}
+                  firstname={entry.firstname}
+                  lastname={entry.lastname}
+                  activity={entry.activity}
+                  restrictions={[{displayValue: 'a',
+                                    ifChecked: entry.a}, 
+                                  {displayValue: 'b',
+                                    ifChecked: entry.b}, 
+                                  {displayValue: 'c',
+                                    ifChecked: entry.c}]}/>
+      )}  
+    </table>
+  );
+}
+
+function Entry(props) {
+  let restrictionsList = props.restrictions;
+  let display = restrictionsList.filter(e => !!e.ifChecked).map(element => element.displayValue);
+  
+  return(
+    <tbody>
+        <tr>
+          <td><button onClick={props.remove} value={props.id} className="brn btn-danger">X</button></td>
+          <td>{props.firstname}</td>
+          <td>{props.lastname}</td>
+          <td>{props.activity}</td>
+          <td>{display}</td>
+        </tr>
+    </tbody> 
+  );
+}
+
+ReactDOM.render(
+  <App />,
+  document.getElementById("root")
+)

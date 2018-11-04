@@ -1,0 +1,27 @@
+.container {
+  margin-top: 1.5em;
+  min-width: 300px;
+  max-width: 550px;
+}
+
+.btn.options {
+  float: left;
+  width: 48%;
+  margin: 1%;
+  padding: 1.5em;
+}
+
+.btn.next {
+  width: 100%;
+  margin-top: 1.5em;
+}
+
+h2 {
+  text-align: center;
+  margin-bottom: 1em;
+}
+
+.alert {
+  text-align: center;
+  font-size: 1.2em;
+}

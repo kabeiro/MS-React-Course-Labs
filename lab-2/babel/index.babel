@@ -1,0 +1,139 @@
+// compressed database of quiz questions, in another environment would put it in separate file
+// should be at the top, doesn't work otherwise
+var quizQuestions=[{question:"Sofia",answerindex:1,answers:[{content:"Belgium",answer:!1},{content:"France",answer:!1},{content:"Egypt",answer:!1},{content:"Bulgaria",answer:!0}]},{question:"Canberra",answerindex:2,answers:[{content:"Algeria",answer:!1},{content:"Australia",answer:!0},{content:"Turkey",answer:!1},{content:"Cameroon",answer:!1}]},{question:"Ottawa",answerindex:3,answers:[{content:"China",answer:!1},{content:"Canada",answer:!0},{content:"Czech Republic",answer:!1},{content:"Cuba",answer:!1}]},{question:"Beijing",answerindex:4,answers:[{content:"Netherlands",answer:!1},{content:"China",answer:!0},{content:"USA",answer:!1},{content:"Italy",answer:!1}]},{question:"Bangkok",answerindex:5,answers:[{content:"Colombia",answer:!1},{content:"Argentina",answer:!1},{content:"Thailand",answer:!0},{content:"India",answer:!1}]},{question:"Nicosia",answerindex:6,answers:[{content:"Cyprus",answer:!0},{content:"Russia",answer:!1},{content:"Costa Rica",answer:!1},{content:"Pakistan",answer:!1}]},{question:"Islamabad",answerindex:7,answers:[{content:"Canada",answer:!1},{content:"Philippines",answer:!1},{content:"Pakistan",answer:!0},{content:"Cambodia",answer:!1}]},{question:"Yerevan",answerindex:8,answers:[{content:"Egypt",answer:!1},{content:"Armenia",answer:!0},{content:"Bangladesh",answer:!1},{content:"Thailand",answer:!1}]},{question:"Luanda",answerindex:9,answers:[{content:"Spain",answer:!1},{content:"Cuba",answer:!1},{content:"Azerbaijan",answer:!1},{content:"Angola",answer:!0}]},{question:"Santiago",answerindex:10,answers:[{content:"Japan",answer:!1},{content:"Chile",answer:!0},{content:"Cuba",answer:!1},{content:"Dominica",answer:!1}]}];
+
+// question title
+function Question(props){
+  return (
+    <h2>{props.question} is the capital of which country?</h2>
+  );
+}
+
+// green button setting next question
+function Button(props) {
+  return (
+    <button className="btn next btn-success btn-large" onClick={props.onClick}>Next</button>
+  );
+}
+
+// blue plate with info about questions and answers
+function GameInfo(props) {
+  return (
+    <div className="alert alert-info">
+      Question No. <strong>{props.quesNo}</strong> / 10 <br />
+      Correct answers: <strong>{props.correct}</strong> <br />
+      Wrong answers: <strong>{props.wrong}</strong>
+    </div>
+  );
+}
+
+// informs about correct / wrong response, changes green / red respectively
+function AnswerAlert(props){
+  const validateAnswer = props.ifCorrect;
+  const quesNo = props.quesNo;
+  if (validateAnswer) {
+    return <div className="alert alert-success">Correct!</div>
+  } 
+  return <div className="alert alert-danger">Wrong!</div>
+}
+
+// sets buttons with answer options
+class Board extends React.Component {
+  // not sure if it's the most efficient way to set each option (perhaps 'for loop' would be better), but followed the example in original React tutorial
+  // on click becomes disabled and reports if the answer was correct / wrong
+  renderVariant(i) {
+    return (
+      <button className="options btn btn-info btn-large" 
+              onClick={() => this.props.onClick(i)} disabled={this.props.dis}>
+        {this.props.options[i].content}
+      </button>
+    );
+  }
+  
+  render() {
+    return (
+    <div>
+      {this.renderVariant(0)}
+      {this.renderVariant(1)}
+      {this.renderVariant(2)}
+      {this.renderVariant(3)}
+    </div>
+  );
+  }
+}
+
+class Quiz extends React.Component {
+  constructor(props){
+    super(props);
+    this.state = {
+      counter: 0,
+      question: '',
+      options: [],
+      quesNo: 1,
+      correct: 0,
+      wrong: 0,
+      ifCorrect: true,
+      disabled: false
+    };
+  }
+  
+  componentWillMount() {
+    this.setState({
+      question: quizQuestions[0].question,
+      options: quizQuestions[0].answers,
+      quesNo: quizQuestions[0].answerindex
+    });
+    }
+  
+  // response to click: counts correct/wrong answers and disables option buttons
+  handleClick(i) {
+    const counter = this.state.counter,
+          answer = quizQuestions[counter].answers[i].answer;
+    if(answer){
+       this.setState((state, props) => ({
+          correct: state.correct + 1,
+          ifCorrect: true,
+          disabled: true
+       }));
+       } else {
+        this.setState((state, props) => ({
+          wrong: state.wrong + 1,
+          ifCorrect: false,
+          disabled: true
+       }));
+     }
+  }
+  
+  // sets next question by updating counter
+  jumpTo() {
+    const counter = this.state.counter + 1;
+    this.setState({
+      counter: counter,
+      quesNo: quizQuestions[counter].answerindex,
+      question: quizQuestions[counter].question,
+      options: quizQuestions[counter].answers,
+      disabled: false
+    });
+  }
+  
+  render(){
+    return (
+      <div className="container">
+        <GameInfo quesNo={this.state.quesNo} correct={this.state.correct} wrong={this.state.wrong}/>
+        <div className="board">
+          <Question question={this.state.question}/>
+          <AnswerAlert ifCorrect={this.state.ifCorrect}/>
+          <Board options={this.state.options} 
+            onClick={i => this.handleClick(i)} dis={this.state.disabled}/>
+          <Button onClick={() => this.jumpTo()}/>
+        </div>  
+      </div>
+    );
+  }
+}
+
+ReactDOM.render(
+  <Quiz />,
+  document.getElementById("root")
+)
+
