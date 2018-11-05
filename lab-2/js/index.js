@@ -32,9 +32,9 @@ function AnswerAlert(props) {
   var validateAnswer = props.ifCorrect;
   var quesNo = props.quesNo;
   if (validateAnswer) {
-    return React.createElement("div", { className: "alert alert-success" }, "Correct!");
+    return React.createElement("div", { className: props.shouldHide ? 'hidden alert alert-success' : 'alert alert-success' }, "Correct!");
   }
-  return React.createElement("div", { className: "alert alert-danger" }, "Wrong!");
+  return React.createElement("div", { className: props.shouldHide ? 'hidden alert alert-danger' : 'alert alert-danger' }, "Wrong!");
 }
 
 // sets buttons with answer options
@@ -73,7 +73,8 @@ Quiz = function (_React$Component2) {_inherits(Quiz, _React$Component2);
       correct: 0,
       wrong: 0,
       ifCorrect: true,
-      disabled: false };return _this3;
+      disabled: false,
+      shouldHide: true };return _this3;
 
   }_createClass(Quiz, [{ key: "componentWillMount", value: function componentWillMount()
 
@@ -93,13 +94,15 @@ Quiz = function (_React$Component2) {_inherits(Quiz, _React$Component2);
         this.setState(function (state, props) {return {
             correct: state.correct + 1,
             ifCorrect: true,
-            disabled: true };});
+            disabled: true,
+            shouldHide: false };});
 
       } else {
         this.setState(function (state, props) {return {
             wrong: state.wrong + 1,
             ifCorrect: false,
-            disabled: true };});
+            disabled: true,
+            shouldHide: false };});
 
       }
     }
@@ -112,7 +115,8 @@ Quiz = function (_React$Component2) {_inherits(Quiz, _React$Component2);
         quesNo: quizQuestions[counter].answerindex,
         question: quizQuestions[counter].question,
         options: quizQuestions[counter].answers,
-        disabled: false });
+        disabled: false,
+        shouldHide: true });
 
     } }, { key: "render", value: function render()
 
@@ -121,8 +125,8 @@ Quiz = function (_React$Component2) {_inherits(Quiz, _React$Component2);
         React.createElement("div", { className: "container" },
           React.createElement(GameInfo, { quesNo: this.state.quesNo, correct: this.state.correct, wrong: this.state.wrong }),
           React.createElement("div", { className: "board" },
+            React.createElement(AnswerAlert, { ifCorrect: this.state.ifCorrect, shouldHide: this.state.shouldHide }),
             React.createElement(Question, { question: this.state.question }),
-            React.createElement(AnswerAlert, { ifCorrect: this.state.ifCorrect }),
             React.createElement(Board, { options: this.state.options,
               onClick: function onClick(i) {return _this4.handleClick(i);}, dis: this.state.disabled }),
             React.createElement(Button, { onClick: function onClick() {return _this4.jumpTo();} }))));
